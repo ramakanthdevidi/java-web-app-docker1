@@ -1,0 +1,41 @@
+name: Shared Workspace Example
+
+on: [push]
+
+jobs:
+  # First job that prepares the workspace
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false  # Prevents storing the credentials in the workspace
+
+      - name: Prepare workspace
+        run: |
+          echo "Setting up files"
+          echo "Sample data" > sample.txt
+
+      - name: Upload workspace to artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: workspace
+          path: .  # Uploads the current workspace contents
+
+  # Second job that depends on the first job and downloads the workspace
+  process:
+    runs-on: ubuntu-latest
+    needs: setup  # Ensures this job runs after 'setup' job is complete
+    steps:
+      - name: Download workspace from artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: workspace  # Matches the artifact name from the 'setup' job
+          path: .  # Downloads to the current directory
+
+      - name: Verify workspace files
+        run: cat sample.txt  # Confirm that sample.txt exists
+
+      - name: Perform additional actions
+        run: echo "Processing workspace data"
