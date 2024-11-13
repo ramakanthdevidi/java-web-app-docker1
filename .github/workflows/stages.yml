@@ -82,3 +82,13 @@ jobs:
         context: .
         push: true
         tags: pavan176/webapp:v.0.1
+  RunImage:
+    runs-on: ubuntu-latest
+    needs: ImageBuild
+    steps:
+    - name: sh
+      shell: bash
+      run: |
+        curl ifconfig.me/ip
+        hostname -I
+        sudo docker run -itd -p 8080:80 pavan176/webapp:v.0.1
