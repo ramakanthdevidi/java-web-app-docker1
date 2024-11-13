@@ -90,5 +90,5 @@ jobs:
       shell: bash
       run: |
         curl ifconfig.me/ip
-        hostname -I
         sudo docker run -itd -p 8080:80 pavan176/webapp:v.0.1
+        sleep 500
