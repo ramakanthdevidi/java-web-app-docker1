@@ -1,0 +1,19 @@
+name: git-mvn-docker-test
+on:
+  workflow_dispatch:
+jobs:
+  Build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+      with:
+        repository: DaggupatiPavan/java-web-app-docker
+    - name: sh
+      shell: bash
+      run: mvn clean package
+    - name: sh
+      shell: bash
+      run: |
+        sudo docker build -t pavan176/webapp .
