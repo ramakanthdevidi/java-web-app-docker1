@@ -83,7 +83,7 @@ jobs:
         push: true
         tags: pavan176/webapp:v.0.1
   RunImage:
-    runs-on: tcsaws
+    runs-on: self-hosted
     needs: ImageBuild
     steps:
     - name: sh
