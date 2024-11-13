@@ -1,6 +1,7 @@
 name: Shared Workspace Example
 
-on: [push]
+on: 
+  workflow_dispatch:
 
 jobs:
   # First job that prepares the workspace
