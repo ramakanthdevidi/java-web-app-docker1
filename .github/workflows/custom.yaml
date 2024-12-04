@@ -1,0 +1,85 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Enables manual triggering
+
+jobs:
+  build:
+    runs-on: ubuntu  # Use GitHub-hosted runner or self-hosted if needed
+
+    env:
+      REPO_URL: 'https://github.com/ramakanthdevidi/firstproject.git'
+      BRANCH: 'main'
+      IMAGE_NAME: 'firstproject-image'
+      CONTAINER_NAME: 'firstproject-container'
+      LOGS_DIR: './logs'
+      VERBOSITY: 'info'  # Example, could be 'debug', 'info', or 'error'
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Create logs directory
+      run: mkdir -p ${{ env.LOGS_DIR }}
+
+    - name: Log start time of the build
+      run: echo "Build started at $(date)" >> ${{ env.LOGS_DIR }}/build_execution_times.txt
+
+    # Set up JDK 11
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    # Build the project with Maven
+    - name: Build with Maven
+      run: |
+        echo "Starting Maven build at $(date)" >> ${{ env.LOGS_DIR }}/build_execution_times.txt
+        mvn clean install > ${{ env.LOGS_DIR }}/maven_stdout.log 2> ${{ env.LOGS_DIR }}/maven_stderr.log
+        echo "Maven build completed at $(date)" >> ${{ env.LOGS_DIR }}/build_execution_times.txt
+
+    # Set up Docker Buildx
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    # Build Docker image
+    - name: Build Docker image
+      run: |
+        echo "Building Docker image at $(date)" >> ${{ env.LOGS_DIR }}/build_execution_times.txt
+        sudo chmod 666 /var/run/docker.sock
+        docker build -t ${{ env.IMAGE_NAME }} . >> ${{ env.LOGS_DIR }}/docker_build.log 2>&1
+        echo "Docker image built at $(date)" >> ${{ env.LOGS_DIR }}/build_execution_times.txt
+
+    # Run Docker container
+    - name: Run Docker container
+      run: |
+        docker rm -f ${{ env.CONTAINER_NAME }} || true
+        docker run -d --name ${{ env.CONTAINER_NAME }} ${{ env.IMAGE_NAME }} >> ${{ env.LOGS_DIR }}/docker_run.log 2>&1
+
+    # Log completion time
+    - name: Log completion time
+      run: echo "Pipeline completed at $(date)" >> ${{ env.LOGS_DIR }}/build_execution_times.txt
+
+    # Upload build logs as artifacts (no S3)
+    - name: Upload build logs
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-logs
+        path: ${{ env.LOGS_DIR }}
+
+    # Success message
+    - name: Success message
+      if: success()
+      run: echo 'Pipeline completed successfully!'
+
+    # Failure message
+    - name: Failure message
+      if: failure()
+      run: echo 'Pipeline failed.'
