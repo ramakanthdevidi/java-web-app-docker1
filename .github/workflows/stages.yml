@@ -1,5 +1,5 @@
 
-name: multistage
+name: multistages
 on:
   workflow_dispatch:
 jobs:
