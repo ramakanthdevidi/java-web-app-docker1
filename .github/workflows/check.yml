@@ -1,0 +1,94 @@
+
+name: multistages
+on:
+  workflow_dispatch:
+jobs:
+  clone:
+    name: clone
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+      with:
+        repository: DaggupatiPavan/java-web-app-docker
+
+    - name: Upload workspace to artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: workspace
+        path: . 
+  Build:
+    runs-on: ubuntu-latest
+    needs: clone
+    steps:
+    - name: Download workspace from artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: workspace  # Matches the artifact name from the 'setup' job
+        path: .
+    - name: sh
+      shell: bash
+      run: mvn clean package
+
+    - name: Upload workspace to artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: workspace
+        path: . 
+
+  Build2:
+    runs-on: ubuntu-latest
+    needs: clone
+    steps:
+    - name: Download workspace from artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: workspace  # Matches the artifact name from the 'setup' job
+        path: .
+    - name: sh
+      shell: bash
+      run: echo "done"
+
+    - name: Upload workspace to artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: workspace
+        path: .      
+
+  ImageBuild:
+    runs-on: ubuntu-latest
+    needs: Build
+    steps:
+    - name: Download workspace from artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: workspace  # Matches the artifact name from the 'setup' job
+        path: .
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: sh
+      shell: bash
+      run: whoami && pwd && ls && ls target/
+    - name: Build and push
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        tags: pavan176/webapp:v.0.1
+  RunImage:
+    runs-on: self-hosted
+    needs: ImageBuild
+    steps:
+    - name: sh
+      shell: bash
+      run: |
+        curl ifconfig.me/ip
+        sudo docker run -itd -p 8054:80 pavan176/webapp:v.0.1
+        
