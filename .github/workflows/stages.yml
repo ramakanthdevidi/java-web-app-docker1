@@ -11,7 +11,11 @@ jobs:
       # Step 1: Checkout the code
       - name: Checkout repository
         uses: actions/checkout@v3
-
+        
+      - name: install ncc
+        run: |
+          npm install ncc
+          
       - name: Build Application
         uses: DaggupatiPavan/custom-action@v1
         id: build
