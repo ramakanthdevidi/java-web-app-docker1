@@ -81,12 +81,20 @@ jobs:
         
     - name: Run tests with metrics
       uses: DaggupatiPavan/test-action2@v1
-      id: test-metrics
+    - name: Run command with metrics
+      uses: DaggupatiPavan/test-action3@v1
+      id: command-metrics
       with:
         command: 'npm test'
-    
-    - name: Log test metrics
+        working-directory: './my-project'
+        
+    - name: Use metrics in subsequent steps
       run: |
-        echo "Test execution time: ${{ steps.test-metrics.outputs.duration }}ms"
-        echo "Test output: ${{ steps.test-metrics.outputs.stdout }}"
-    
+        echo "Command took ${{ steps.command-metrics.outputs.duration }}ms to execute"
+        echo "Echo metrics file location: ${{ steps.command-metrics.outputs.metrics_file }}"
+        
+    # Query metrics from previous runs
+    - name: Query metrics
+      run: |
+        npm run metrics -- --run-id ${{ github.run_id }}
+  
