@@ -16,9 +16,17 @@ jobs:
         run: |
           npm install ncc
           
-      - name: Monitor Action Performance
-        uses: DaggupatiPavan/test-action@v1
-          
+      - name: Run tests with metrics
+        uses: DaggupatiPavan/test-action2@v1
+        id: test-metrics
+        with:
+          command: 'npm test'
+      
+      - name: Log test metrics
+        run: |
+          echo "Test execution time: ${{ steps.test-metrics.outputs.duration }}ms"
+          echo "Test output: ${{ steps.test-metrics.outputs.stdout }}"
+                
       - name: Use Build Output
         run: |
           echo "Build took ${{ steps.build.outputs.duration }}ms"
