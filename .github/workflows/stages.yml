@@ -16,11 +16,8 @@ jobs:
         run: |
           npm install ncc
           
-      - name: Build Application
+      - name: Monitor Action Performance
         uses: DaggupatiPavan/custom-action@v1
-        id: build
-        with:
-          command: 'npm run build'
           
       - name: Use Build Output
         run: |
