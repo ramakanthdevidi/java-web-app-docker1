@@ -4,7 +4,8 @@ on:
   workflow_dispatch: # Trigger workflow manually
 
 jobs:
-  collect_and_store_data:
+  clone:
+    name: clone
     runs-on: self-hosted # Use the self-hosted runner
     steps:
       # Step 1: Checkout the code
