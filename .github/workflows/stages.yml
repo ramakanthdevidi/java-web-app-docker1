@@ -36,25 +36,7 @@ jobs:
         name: workspace
         path: . 
 
-  Build2:
-    runs-on: ubuntu-latest
-    needs: clone
-    steps:
-    - name: Download workspace from artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: workspace  # Matches the artifact name from the 'setup' job
-        path: .
-    - name: sh
-      shell: bash
-      run: echo "done"
-
-    - name: Upload workspace to artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: workspace
-        path: .      
-
+ 
   ImageBuild:
     runs-on: ubuntu-latest
     needs: Build
