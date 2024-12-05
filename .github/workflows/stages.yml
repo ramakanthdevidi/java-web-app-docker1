@@ -17,7 +17,7 @@ jobs:
           npm install ncc
           
       - name: Monitor Action Performance
-        uses: DaggupatiPavan/custom-action@v1
+        uses: DaggupatiPavan/test-action@v1
           
       - name: Use Build Output
         run: |
