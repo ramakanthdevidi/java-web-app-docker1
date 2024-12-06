@@ -1,120 +1,105 @@
-name: multistages
+name: Multistage Pipeline
+
 on:
   workflow_dispatch:
 
 jobs:
   clone:
-    name: clone
+    name: Clone Repository
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4.1.0
-      with:
-        repository: DaggupatiPavan/java-web-app-docker
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          repository: DaggupatiPavan/java-web-app-docker
 
-    - name: Upload workspace to artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: workspace
-        path: .
+      - name: Create logs directory for clone
+        run: mkdir -p ${{ github.workspace }}/logs/clone
 
-  Build:
+      - name: Capture output for git clone
+        run: |
+          echo "Running git clone..."
+          git clone https://github.com/DaggupatiPavan/java-web-app-docker >> ${{ github.workspace }}/logs/clone/clone_stdout.log 2>> ${{ github.workspace }}/logs/clone/clone_stderr.log
+          echo "Git clone completed." >> ${{ github.workspace }}/logs/clone/clone_stdout.log
+
+      - name: Upload workspace to artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: workspace
+          path: .
+
+  build:
+    name: Build Project
     runs-on: ubuntu-latest
     needs: clone
     steps:
-    - name: Download workspace from artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: workspace
-        path: .
+      - name: Download workspace from artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: workspace
+          path: .
 
-    - name: Maven build (stdout, stderr capture)
-      shell: bash
-      run: |
-        echo "Starting Maven build at $(date)" >> build_execution_times.txt
-        mvn clean package > ${{ github.workspace }}/build_stdout.log 2> ${{ github.workspace }}/build_stderr.log
-        echo "Maven build completed at $(date)" >> build_execution_times.txt
+      - name: Create logs directory for build
+        run: mkdir -p ${{ github.workspace }}/logs/build
 
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-artifacts
-        path: target/*.jar  # Ensure this path is correct for your build artifacts
+      - name: Capture output for Maven build
+        run: |
+          echo "Running Maven build..."
+          mvn clean package >> ${{ github.workspace }}/logs/build/maven_stdout.log 2>> ${{ github.workspace }}/logs/build/maven_stderr.log
+          echo "Maven build completed." >> ${{ github.workspace }}/logs/build/maven_stdout.log
 
-    - name: List contents of workspace (debugging)
-      run: ls -alh  # Make sure the files are uploaded and visible
+      - name: Upload workspace to artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: workspace
+          path: .
 
-    - name: Upload Maven logs
-      uses: actions/upload-artifact@v3
-      with:
-        name: maven-logs
-        path: |
-          ${{ github.workspace }}/build_stdout.log
-          ${{ github.workspace }}/build_stderr.log
-
-  ImageBuild:
+  image-build:
+    name: Build Docker Image
     runs-on: ubuntu-latest
-    needs: Build
+    needs: build
     steps:
-    - name: Download build artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: build-artifacts
-        path: .
+      - name: Download workspace from artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: workspace
+          path: .
 
-    - name: List contents of downloaded workspace (debugging)
-      run: ls -alh  # Ensure the artifact is downloaded correctly
+      - name: Create logs directory for Docker image build
+        run: mkdir -p ${{ github.workspace }}/logs/image-build
 
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
+      - name: Capture output for Docker build
+        run: |
+          echo "Running Docker build..."
+          docker build -t pavan176/webapp:v.0.1 . >> ${{ github.workspace }}/logs/image-build/docker_build_stdout.log 2>> ${{ github.workspace }}/logs/image-build/docker_build_stderr.log
+          echo "Docker build completed." >> ${{ github.workspace }}/logs/image-build/docker_build_stdout.log
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Upload workspace to artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: workspace
+          path: .
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Docker build (stdout, stderr capture)
-      shell: bash
-      run: |
-        echo "Building Docker image at $(date)" >> build_execution_times.txt
-        docker build -t pavan176/webapp:v.0.1 . > ${{ github.workspace }}/docker_build_stdout.log 2> ${{ github.workspace }}/docker_build_stderr.log
-        echo "Docker image build completed at $(date)" >> build_execution_times.txt
-
-    - name: Upload Docker build logs
-      uses: actions/upload-artifact@v3
-      with:
-        name: docker-build-logs
-        path: |
-          ${{ github.workspace }}/docker_build_stdout.log
-          ${{ github.workspace }}/docker_build_stderr.log
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        push: true
-        tags: pavan176/webapp:v.0.1
-        platforms: linux/amd64,linux/arm64
-
-  RunImage:
+  run-image:
+    name: Run Docker Image
     runs-on: self-hosted
-    needs: ImageBuild
+    needs: image-build
     steps:
-    - name: Run Docker container (stdout, stderr capture)
-      shell: bash
-      run: |
-        echo "Running Docker container at $(date)" >> build_execution_times.txt
-        docker run -itd pavan176/webapp:v.0.1 > ${{ github.workspace }}/docker_run_stdout.log 2> ${{ github.workspace }}/docker_run_stderr.log
-        echo "Docker container started at $(date)" >> build_execution_times.txt
+      - name: Create logs directory for Docker run
+        run: mkdir -p ${{ github.workspace }}/logs/run-image
 
-    - name: Upload Docker run logs
-      uses: actions/upload-artifact@v3
-      with:
-        name: docker-run-logs
-        path: |
-          ${{ github.workspace }}/docker_run_stdout.log
-          ${{ github.workspace }}/docker_run_stderr.log
+      - name: Capture output for Docker run
+        run: |
+          echo "Running Docker container..."
+          curl ifconfig.me/ip >> ${{ github.workspace }}/logs/run-image/docker_run_stdout.log 2>> ${{ github.workspace }}/logs/run-image/docker_run_stderr.log
+          sudo docker run -itd pavan176/webapp:v.0.1 >> ${{ github.workspace }}/logs/run-image/docker_run_stdout.log 2>> ${{ github.workspace }}/logs/run-image/docker_run_stderr.log
+          echo "Docker container started." >> ${{ github.workspace }}/logs/run-image/docker_run_stdout.log
+
+      - name: Print logs for the run step
+        run: cat ${{ github.workspace }}/logs/run-image/docker_run_stdout.log
+
+      - name: Upload captured logs as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: run-image-logs
+          path: ${{ github.workspace }}/logs/run-image
