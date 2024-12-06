@@ -73,7 +73,7 @@ jobs:
       - name: Capture output for Docker build
         run: |
           echo "Starting Docker build..." >> ${{ github.workspace }}/logs/image-build/docker_build_stdout.log
-          docker build -t pavan176/webapp:v.0.1 . >> ${{ github.workspace }}/logs/image-build/docker_build_stdout.log 2>> ${{ github.workspace }}/logs/image-build/docker_build_stderr.log
+          docker build -f pavan176/webapp:v.0.1 . >> ${{ github.workspace }}/logs/image-build/docker_build_stdout.log 2>> ${{ github.workspace }}/logs/image-build/docker_build_stderr.log
           echo "Docker build completed." >> ${{ github.workspace }}/logs/image-build/docker_build_stdout.log
 
       - name: Upload Docker build logs
