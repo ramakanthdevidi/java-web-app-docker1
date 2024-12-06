@@ -7,7 +7,7 @@ jobs:
     steps:
       - name: list file
         run: | 
-           ls -la 
+           ls -la && touch package.json
       - name: Capture output
         uses: 'selfagency/capture-output@v1'
         with:
