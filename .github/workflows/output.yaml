@@ -5,6 +5,9 @@ jobs:
   capture-output:
     runs-on: ubuntu-latest
     steps:
+      - name: list file
+        run: | 
+           ls -la 
       - name: Capture output
         uses: 'selfagency/capture-output@v1'
         with:
