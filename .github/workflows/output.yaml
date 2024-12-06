@@ -16,7 +16,7 @@ jobs:
         uses: 'selfagency/capture-output@v1'
         with:
           cmd: yarn
-          args: run,build,--verbose
+          args: run,build
           hide-warnings: true
           fail: false
           file: ${{ github.workspace }}/output.txt 
