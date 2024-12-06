@@ -1,0 +1,18 @@
+name: Capture output
+on:
+  workflow_dispatch:
+jobs:
+  capture-output:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Capture output
+        uses: 'selfagency/capture-output@v1'
+        with:
+          cmd: yarn
+          args: run,build,--verbose
+          hide-warnings: true
+          fail: false
+          file: ${{ github.workspace }}/output.txt 
+      - name: open file
+        run: | 
+           cat  ${{ github.workspace }}/output.txt 
