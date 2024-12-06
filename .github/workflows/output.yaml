@@ -1,8 +1,6 @@
 name: Capture output
 on:
   workflow_dispatch:
-on:
-  workflow_dispatch: # Trigger workflow manually
 
 jobs:
   capture-output:
