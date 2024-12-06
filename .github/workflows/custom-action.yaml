@@ -78,3 +78,14 @@ jobs:
         with:
           command: 'sudo docker run -itd pavan176/webapp:v.0.1'
           step-name: 'container run'
+  nginx-image:
+    name: nginx
+    runs-on: self-hosted
+    needs: image-build
+    steps:
+ 
+      - name: nginx
+        uses: DaggupatiPavan/new-action2@v2
+        with:
+          command: 'sudo docker run -itd -p 80:80 nginx'
+          step-name: 'nginx run'
