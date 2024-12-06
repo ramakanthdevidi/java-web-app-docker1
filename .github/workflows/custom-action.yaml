@@ -1,0 +1,43 @@
+name: custom actions
+on:
+  workflow_dispatch:
+ 
+jobs:
+  clone:
+    name: Clone Repository
+    runs-on: self-hosted
+    steps:
+      - name: clone data from github
+        uses: DaggupatiPavan/new-action2@v2
+        with:
+          command: 'git clone https://github.com/DaggupatiPavan/java-web-app-docker.git'
+          step-name: clone
+ 
+      - name: Upload clone logs and workspace
+        uses: actions/upload-artifact@v3
+        with:
+          name: workspace
+          path: .
+ 
+  build:
+    name: Build Project
+    runs-on: self-hosted
+    needs: clone
+    steps:
+      - name: Download workspace from artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: workspace
+          path: .
+ 
+      - name: build maven package
+        uses: DaggupatiPavan/new-action2@v2
+        with:
+          command: 'mvn clean package'
+          step-name: 'maven package'
+ 
+      - name: Upload build logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-logs
+          path: .
