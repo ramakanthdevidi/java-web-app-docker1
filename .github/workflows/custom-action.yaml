@@ -10,7 +10,7 @@ jobs:
       - name: clone data from github
         uses: DaggupatiPavan/new-action2@v2
         with:
-          command: 'git clone https://github.com/DaggupatiPavan/java-web-app-docker.git'
+          command: 'git clone https://github.com/DaggupatiPavan/java-web-app-docker.git .'
           step-name: clone
  
       - name: Upload clone logs and workspace
@@ -41,3 +41,39 @@ jobs:
         with:
           name: build-logs
           path: .
+     
+  image-build:
+    name: Build Docker Image
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Download workspace from artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: workspace
+          path: .
+ 
+      - name: Run System Health Check
+        uses: DaggupatiPavan/new-action2@v2
+        with:
+          command: 'docker build -t pavan176/webapp:v.0.1 .'
+          step-name: 'docker image build'
+ 
+      - name: Upload Docker build logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-build-logs
+          path: .
+ 
+  run-image:
+    name: Run Docker Image
+    runs-on: self-hosted
+    needs: image-build
+    steps:
+ 
+      - name: Run System Health Check
+        uses: DaggupatiPavan/new-action2@v2
+        with:
+          command: 'sudo docker run -itd pavan176/webapp:v.0.1'
+          step-name: 'container run'
+has context menu
