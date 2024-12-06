@@ -1,7 +1,7 @@
 name: CI Pipeline with Logs
 on:
   workflow_dispatch:
-  
+
 jobs:
   clone:
     name: Clone Repository
@@ -11,6 +11,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: DaggupatiPavan/java-web-app-docker
+
+      - name: Create log directories for clone
+        run: |
+          mkdir -p ${{ github.workspace }}/logs/clone
 
       - name: Capture output for clone
         run: |
@@ -35,6 +39,10 @@ jobs:
           name: workspace
           path: .
 
+      - name: Create log directories for build
+        run: |
+          mkdir -p ${{ github.workspace }}/logs/build
+
       - name: Capture output for Maven build
         run: |
           echo "Starting Maven build..." >> ${{ github.workspace }}/logs/build/maven_stdout.log
@@ -58,6 +66,10 @@ jobs:
           name: workspace
           path: .
 
+      - name: Create log directories for image build
+        run: |
+          mkdir -p ${{ github.workspace }}/logs/image-build
+
       - name: Capture output for Docker build
         run: |
           echo "Starting Docker build..." >> ${{ github.workspace }}/logs/image-build/docker_build_stdout.log
@@ -75,6 +87,10 @@ jobs:
     runs-on: self-hosted
     needs: image-build
     steps:
+      - name: Create log directories for run image
+        run: |
+          mkdir -p ${{ github.workspace }}/logs/run-image
+
       - name: Capture output for Docker run
         run: |
           echo "Starting Docker container..." >> ${{ github.workspace }}/logs/run-image/docker_run_stdout.log
