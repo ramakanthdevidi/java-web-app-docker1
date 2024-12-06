@@ -58,7 +58,7 @@ jobs:
       - name: Run System Health Check
         uses: DaggupatiPavan/new-action2@v2
         with:
-          command: 'docker build - pavan176/webapp:v.0.1 .'
+          command: 'docker build -t pavan176/webapp:v.0.1 .'
           step-name: 'docker image build'
  
       - name: Upload Docker build logs
