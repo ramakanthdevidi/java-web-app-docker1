@@ -7,10 +7,12 @@ jobs:
     name: Clone Repository
     runs-on: self-hosted
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: clone data from github
         uses: DaggupatiPavan/new-action2@v2
         with:
-          command: 'git clone https://github.com/DaggupatiPavan/java-web-app-docker.git .'
+          command: 'git clone https://github.com/DaggupatiPavan/java-web-app-docker.git '
           step-name: clone
  
       - name: Upload clone logs and workspace
