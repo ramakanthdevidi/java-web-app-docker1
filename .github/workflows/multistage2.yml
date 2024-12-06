@@ -22,12 +22,12 @@ jobs:
           git clone https://github.com/DaggupatiPavan/java-web-app-docker.git >> ${{ github.workspace }}/logs/clone/clone_stdout.log 2>> ${{ github.workspace }}/logs/clone/clone_stderr.log
           echo "Clone process completed." >> ${{ github.workspace }}/logs/clone/clone_stdout.log
 
-      - name: Upload clone logs
+      - name: Upload clone logs and workspace
         uses: actions/upload-artifact@v3
         with:
-          name: clone-logs
-          path: ${{ github.workspace }}/logs/clone/
-        
+          name: workspace
+          path: ${{ github.workspace }}  # Ensure all necessary files are included
+
   build:
     name: Build Project
     runs-on: self-hosted
