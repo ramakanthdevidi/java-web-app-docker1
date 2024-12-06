@@ -7,7 +7,7 @@ jobs:
     name: clone
     runs-on: ubuntu-latest
     steps:
-    - name: checkout
+    - name: Checkout repository
       uses: actions/checkout@v4.1.0
       with:
         repository: DaggupatiPavan/java-web-app-docker
@@ -39,7 +39,10 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: build-artifacts
-        path: target/*.jar  # Only upload the built artifacts
+        path: target/*.jar  # Ensure this path is correct for your build artifacts
+
+    - name: List contents of workspace (debugging)
+      run: ls -alh  # Make sure the files are uploaded and visible
 
     - name: Upload Maven logs
       uses: actions/upload-artifact@v3
@@ -58,6 +61,9 @@ jobs:
       with:
         name: build-artifacts
         path: .
+
+    - name: List contents of downloaded workspace (debugging)
+      run: ls -alh  # Ensure the artifact is downloaded correctly
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
