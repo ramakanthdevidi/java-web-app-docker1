@@ -8,7 +8,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: clone data from github
-        uses: DaggupatiPavan/new-action3@v1
+        uses: DaggupatiPavan/new-action2@v2
         with:
           command: 'git clone https://github.com/DaggupatiPavan/java-web-app-docker.git .'
           step-name: clone
@@ -31,7 +31,7 @@ jobs:
           path: .
  
       - name: build maven package
-        uses: DaggupatiPavan/new-action3@v1
+        uses: DaggupatiPavan/new-action2@v2
         with:
           command: 'mvn clean package'
           step-name: 'maven package'
@@ -54,7 +54,7 @@ jobs:
           path: .
  
       - name: Run System Health Check
-        uses: DaggupatiPavan/new-action3@v1
+        uses: DaggupatiPavan/new-action2@v2
         with:
           command: 'docker build - pavan176/webapp:v.0.1 .'
           step-name: 'docker image build'
@@ -72,7 +72,7 @@ jobs:
     steps:
  
       - name: Run System Health Check
-        uses: DaggupatiPavan/new-action3@v1
+        uses: DaggupatiPavan/new-action2@v2
         with:
           command: 'sudo docker run -itd pavan176/webapp:v.0.1'
           step-name: 'container run'
