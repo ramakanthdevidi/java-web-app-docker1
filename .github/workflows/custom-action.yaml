@@ -18,8 +18,13 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
- 
+          AWS_DEFAULT_REGION: us-east-1 
+      - name: Upload clone logs and workspace
+        uses: actions/upload-artifact@v3
+        with:
+          name: workspace
+          path: .
+
   build:
     name: Build Project
     runs-on: ubuntu-latest
@@ -40,7 +45,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           s3-bucket: ${{ secrets.S3_LOGGING_BUCKET }}
           s3-path-prefix: 'github-actions/build-logs/'
-     
+      - name: Upload clone logs and workspace
+        uses: actions/upload-artifact@v3
+        with:
+          name: workspace
+          path: .
   image-build:
     name: Build Docker Image
     runs-on: self-hosted
@@ -61,6 +70,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           s3-bucket: ${{ secrets.S3_LOGGING_BUCKET }}
           s3-path-prefix: 'github-actions/docker-build-logs/'
+      - name: Upload clone logs and workspace
+        uses: actions/upload-artifact@v3
+        with:
+          name: workspace
+          path: .
  
   run-image:
     name: Run Docker Image
