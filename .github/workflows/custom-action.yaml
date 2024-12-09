@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Clone data from GitHub
-        uses: DaggupatiPavan/new-action2@v2
+        uses: DaggupatiPavan/new-action2@v3
         with:
           command: 'git clone https://github.com/DaggupatiPavan/java-web-app-docker.git'
           step-name: 'clone'
@@ -32,7 +32,7 @@ jobs:
           path: .
  
       - name: Build Maven Package
-        uses: DaggupatiPavan/new-action2@v2
+        uses: DaggupatiPavan/new-action2@v3
         with:
           command: 'mvn clean package'
           step-name: 'maven-package'
@@ -53,7 +53,7 @@ jobs:
           path: .
  
       - name: Build Docker Image
-        uses: DaggupatiPavan/new-action2@v2
+        uses: DaggupatiPavan/new-action2@v3
         with:
           command: 'docker build -t pavan176/webapp:v.0.1 .'
           step-name: 'docker-image-build'
@@ -68,7 +68,7 @@ jobs:
     needs: image-build
     steps:
       - name: Run Docker Container
-        uses: DaggupatiPavan/new-action2@v2
+        uses: DaggupatiPavan/new-action2@v3
         with:
           command: 'sudo docker run -itd pavan176/webapp:v.0.1'
           step-name: 'container-run'
@@ -83,7 +83,7 @@ jobs:
     needs: image-build
     steps:
       - name: Run Nginx Container
-        uses: DaggupatiPavan/new-action2@v2
+        uses: DaggupatiPavan/new-action2@v3
         with:
           command: 'sudo docker run -itd -p 80:80 nginx'
           step-name: 'nginx-run'
