@@ -48,7 +48,7 @@ jobs:
       - name: Upload clone logs and workspace
         uses: actions/upload-artifact@v3
         with:
-          name: workspace
+          name: warfile
           path: .
   image-build:
     name: Build Docker Image
@@ -58,7 +58,7 @@ jobs:
       - name: Download workspace
         uses: actions/download-artifact@v3
         with:
-          name: workspace
+          name: warfile
           path: .
  
       - name: Build Docker Image
@@ -70,12 +70,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           s3-bucket: ${{ secrets.S3_LOGGING_BUCKET }}
           s3-path-prefix: 'github-actions/docker-build-logs/'
-      - name: Upload clone logs and workspace
-        uses: actions/upload-artifact@v3
+
+      - name: Push Docker Image
+        uses: DaggupatiPavan/new-action2@v3
         with:
-          name: workspace
-          path: .
- 
+          command: 'docker login -upavan176 -ppavan@123 && docker push pavan176/webapp:v.0.1 .'
+          step-name: 'docker-image-push'
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          s3-bucket: ${{ secrets.S3_LOGGING_BUCKET }}
+          s3-path-prefix: 'github-actions/docker-build-logs/'
   run-image:
     name: Run Docker Image
     runs-on: self-hosted
