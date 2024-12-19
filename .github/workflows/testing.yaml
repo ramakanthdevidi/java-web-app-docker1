@@ -1,0 +1,27 @@
+name: CI/CD Pipeline
+'on':
+  push:
+    branches:
+    - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        repository: DaggupatiPavan/java-web-app-docker
+        # token: ${ secrets.None }
+        # ref: '''main'','
+
+        
+    - name: setup JDK for Maven
+      uses: actions/setup-java@v3
+      with:
+        java-version: 11
+        distribution: adopt
+
+
+    - name: Build with Maven
+      run:
+      - mvn clean package
