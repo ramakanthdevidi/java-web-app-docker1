@@ -1,4 +1,4 @@
-name: git-mvn-docker-test2
+name: git-mvn-docker-test
 
 on:
   workflow_dispatch:  # Trigger manually via the GitHub Actions UI
@@ -18,12 +18,11 @@ jobs:
       shell: bash
       run: mvn clean package  # Builds your Java app using Maven
 
-    # Create Dockerfile dynamically
+    # Create Dockerfile with Tomcat 8.5 and JDK 8
     - name: Write Dockerfile
       run: |
-        echo "FROM openjdk:8-jre" > Dockerfile
-        echo "EXPOSE 8080" >> Dockerfile
-        echo "COPY target/*.jar /usr/src/myapp.jar" >> Dockerfile
+        echo "FROM tomcat:8.5-jdk8" > Dockerfile  # Use Tomcat 8.5 with JDK 8
+        echo "COPY target/java-web-app*.war /usr/local/tomcat/webapps/java-web-app.war" >> Dockerfile  # Copy WAR file to Tomcat webapps directory
 
     # Setup QEMU for multi-platform builds (optional, only needed for cross-platform builds)
     - name: Set up QEMU
