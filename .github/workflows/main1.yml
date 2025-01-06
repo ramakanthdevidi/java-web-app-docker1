@@ -22,7 +22,7 @@ jobs:
 
     # Step 3: Create Dockerfile with Tomcat 8.5 and JDK 8
     - name: Write Dockerfile
-      run: |
+      run: |-
         echo "FROM tomcat:8.5-jdk8" > Dockerfile  # Use Tomcat 8.5 with JDK 8
         echo "COPY target/java-web-app*.war /usr/local/tomcat/webapps/java-web-app.war" >> Dockerfile  # Copy WAR file to Tomcat webapps directory
 
