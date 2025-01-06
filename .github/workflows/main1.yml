@@ -9,32 +9,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout the code from the repository
     - name: Checkout code
       uses: actions/checkout@v4.1.0
       with:
-        repository: DaggupatiPavan/java-web-app-docker  # Your repo here
+        repository: DaggupatiPavan/java-web-app-docker  # Replace with your repository if needed
 
+    # Step 2: Build the Java app using Maven
     - name: Build with Maven
       shell: bash
       run: mvn clean package  # Builds your Java app using Maven
 
-    # Create Dockerfile with Tomcat 8.5 and JDK 8
+    # Step 3: Create Dockerfile with Tomcat 8.5 and JDK 8
     - name: Write Dockerfile
       run: |
         echo "FROM tomcat:8.5-jdk8" > Dockerfile  # Use Tomcat 8.5 with JDK 8
         echo "COPY target/java-web-app*.war /usr/local/tomcat/webapps/java-web-app.war" >> Dockerfile  # Copy WAR file to Tomcat webapps directory
 
-    # Login to Docker Hub
+    # Step 4: Login to Docker Hub
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}  # Ensure your Docker Hub username is in secrets
         password: ${{ secrets.DOCKERHUB_TOKEN }}     # Ensure your Docker Hub token is in secrets
 
-    # Build and push Docker image to Docker Hub
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v6
-      with:
-        context: .  # Use the current directory as the build context
-        push: true   # Push the built image to Docker Hub
-        tags: pavan176/webapp:v.0.1  # Docker image tag (modify as needed)
+    # Step 5: Build the Docker image
+    - name: Docker Build
+      run: |
+        docker build -t pavan176/webapp:v.0.1 .  # Build Docker image with the tag "v.0.1"
+
+    # Step 6: Push the Docker image to Docker Hub
+    - name: Push to DockerHub
+      run: |
+        docker push pavan176/webapp:v.0.1  # Push the built Docker image to Docker Hub
+
