@@ -12,8 +12,9 @@ jobs:
       with:
         repository: DaggupatiPavan/java-web-app-docker
     - name: Build
-      run: '#!/bin/bash
-            mvn clean install'
+      run: 
+      '#!/bin/bash
+      mvn clean install'
         
     
     - name: Test
