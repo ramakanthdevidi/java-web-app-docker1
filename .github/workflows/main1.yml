@@ -1,7 +1,7 @@
-name: last
- 
+name: git-mvn-docker-test
+
 on:
-  workflow_dispatch: 
+  workflow_dispatch:  # This allows manual triggering of the workflow
 
 jobs:
   build:
@@ -21,15 +21,13 @@ jobs:
           mvn clean install
           echo "Maven build completed"
 
-    
-        
       # Run tests using Maven
       - name: Test
         run: |
           #!/bin/bash
           mvn test
 
-      # Write a Dockerfile dynamically for the app
+      # Write Dockerfile dynamically for the app
       - name: Write Dockerfile
         run: |
           #!/bin/bash
