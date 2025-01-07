@@ -1,45 +1,59 @@
-name: newtesting
-'on':
+name: last
+
+on:
   push:
     branches:
-    - main
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        repository: DaggupatiPavan/java-web-app-docker
-    - name: Build
-      run: 
-      '#!/bin/bash
-      mvn clean install'
-        
+      # Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          repository: DaggupatiPavan/java-web-app-docker
+
+      # Build the application using Maven
+      - name: Build
+        run: |
+          #!/bin/bash
+          mvn clean install
+          echo "Maven build completed"
+
     
-    - name: Test
-      run: '#!/bin/bash
+        
+      # Run tests using Maven
+      - name: Test
+        run: |
+          #!/bin/bash
+          mvn test
 
-        mvn test'
-    - name: Write Dockerfile
-      run: '#!/bin/bash
+      # Write a Dockerfile dynamically for the app
+      - name: Write Dockerfile
+        run: |
+          #!/bin/bash
+          echo "FROM openjdk:8-jre" > Dockerfile
+          echo "EXPOSE 8080" >> Dockerfile
+          echo "COPY target/*.jar /usr/src/myapp.jar" >> Dockerfile
 
-        echo "FROM openjdk:8-jre" >> Dockerfile
+      # Build the Docker image for the application
+      - name: Docker Build
+        run: |
+          #!/bin/bash
+          docker build -t pavan176/webapp:v0.1 .
 
-        echo "EXPOSE 8080" >> Dockerfile
+      # Push the Docker image to DockerHub
+      - name: Push to DockerHub
+        run: |
+          #!/bin/bash
+          docker push pavan176/webapp:v0.1
 
-        echo "COPY target/*.jar /usr/src/myapp.jar" >> Dockerfile'
-    - name: Docker Build
-      run: '#!/bin/bash
-
-        docker build -t pavan176/webapp:v.0.1 .'
-    - name: Push to DockerHub
-      run: '#!/bin/bash
-
-        docker push pavan176/webapp:v.0.1'
-    - name: Deploy as Pod
-      run: '#!/bin/bash
-
-        kubectl delete pod paltoalto || true
-
-        kubectl run paltoalto --image=pavan176/webapp:v.0.1'
+      # Deploy the application as a Pod in Kubernetes
+      - name: Deploy as Pod
+        run: |
+          #!/bin/bash
+          kubectl delete pod paltoalto || true
+          kubectl run paltoalto --image=pavan176/webapp:v0.1 --restart=Never
