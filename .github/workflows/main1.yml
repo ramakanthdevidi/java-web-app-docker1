@@ -1,9 +1,7 @@
 name: last
 
-on:
-  push:
-    branches:
-      - main
+	on:
+ 	workflow_dispatch:  # Trigger manually via the GitHub Actions UI
 
 jobs:
   build:
