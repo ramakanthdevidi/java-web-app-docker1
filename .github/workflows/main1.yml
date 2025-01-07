@@ -11,7 +11,7 @@ jobs:
     steps:
     # Step 1: Checkout the code from the repository
     - name: Checkout code
-      uses: actions/c 
+      uses: actions/checkout@v4.1.0
       with:
         repository: DaggupatiPavan/java-web-app-docker  # Replace with your repository if needed
 
