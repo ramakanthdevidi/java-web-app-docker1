@@ -1,7 +1,7 @@
 name: git-mvn-docker-test
 
 on:
-  workflow_dispatch:  # This allows manual triggering of the workflow
+  workflow_dispatch:  # Manual trigger
 
 jobs:
   build:
@@ -20,6 +20,12 @@ jobs:
           #!/bin/bash
           mvn clean install
           echo "Maven build completed"
+
+      # List the contents of the target directory to verify the .jar file
+      - name: List contents of target directory
+        run: |
+          #!/bin/bash
+          ls -al target/
 
       # Run tests using Maven
       - name: Test
