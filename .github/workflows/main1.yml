@@ -23,6 +23,7 @@ jobs:
     # Step 3: Create Dockerfile with Tomcat 8.5 and JDK 8
     - name: Write Dockerfile
       run: |-
+        #!/bin/bash
         echo "FROM tomcat:8.5-jdk8" > Dockerfile  # Use Tomcat 8.5 with JDK 8
         echo "COPY target/java-web-app*.war /usr/local/tomcat/webapps/java-web-app.war" >> Dockerfile  # Copy WAR file to Tomcat webapps directory
 
@@ -35,11 +36,13 @@ jobs:
 
     # Step 5: Build the Docker image
     - name: Docker Build
-      run: |
+      run: |-
+        #!/bin/bash
         docker build -t pavan176/webapp:v.0.1 .  # Build Docker image with the tag "v.0.1"
 
     # Step 6: Push the Docker image to Docker Hub
     - name: Push to DockerHub
-      run: |
+      run: |-
+        #!/bin/bash
         docker push pavan176/webapp:v.0.1  # Push the built Docker image to Docker Hub
 
